@@ -1,4 +1,3 @@
-import 'package:fake_api/view/detail_page.dart';
 import 'package:fake_api/view/home_page.dart';
 import 'package:flutter/material.dart';
 
