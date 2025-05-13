@@ -30,7 +30,7 @@ class DetailModel {
   factory DetailModel.fromJson(Map<String, dynamic> json) => DetailModel(
         id: json["id"],
         title: json["title"],
-        price: double.parse(json["price"]?.toString() ?? '0.0'),
+        price: json["price"].toDouble(),
         description: json["description"],
         category: json["category"],
         image: json["image"],

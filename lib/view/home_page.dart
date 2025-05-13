@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:fake_api/view/detail_page.dart';
-import 'package:fake_api/view/search_screen.dart';
+import 'package:fake_api/view/random_image_generater.dart';
+import 'package:fake_api/view/search.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -47,6 +48,17 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RandomImageGenerater(storelist: storeList),
+            ),
+          );
+        },
+        child: Icon(Icons.add),
+      ),
       backgroundColor: Colors.white,
       appBar: AppBar(
         surfaceTintColor: Colors.white,
@@ -55,45 +67,13 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          //   child: TextFormField(
-          //     controller: searchController,
-          //     onChanged: (value) {
-          //       setState(() {
-          //         searchstoreList = storeList.where((e) => e.title.toLowerCase().contains(value)).toList();
-          //       });
-          //     },
-          //
-          //     decoration: InputDecoration(
-          //       suffixIcon: GestureDetector(
-          //         onTap: () {
-          //           setState(() {
-          //             searchController.clear();
-          //             searchstoreList = storeList;
-          //           });
-          //         },
-          //         child: Icon(Icons.clear),
-          //       ),
-          //       hintText: "Search",
-          //       prefixIcon: Icon(Icons.search),
-          //       border: OutlineInputBorder(
-          //         borderRadius: BorderRadius.circular(20),
-          //         borderSide: BorderSide.none,
-          //       ),
-          //       filled: true,
-          //       fillColor: Colors.grey[200],
-          //     ),
-          //   ),
-          // ),
-
           GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SearchScreen(
-                    storelist: storeList,
+                  builder: (context) => Search(
+                    storeList: storeList,
                   ),
                 ),
               );
@@ -114,37 +94,34 @@ class _HomePageState extends State<HomePage> {
               ),
               child: Row(
                 children: [
-                  SizedBox(
-                    width: 10,
-                  ),
+                  SizedBox(width: 10),
                   Icon(
                     Icons.search,
                     color: Colors.black,
                   ),
-                  SizedBox(
-                    width: 10,
-                  ),
+                  SizedBox(width: 10),
                   Text(
                     "Search Products",
                     style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
           ),
-          FutureBuilder(
-            future: fetchStoreData(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              return Expanded(
-                child: ListView.builder(
+          Expanded(
+            // Wrap ListView.builder in Expanded
+            child: FutureBuilder(
+              future: fetchStoreData(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return ListView.builder(
                   itemCount: storeList.length,
                   itemBuilder: (context, index) {
                     return Padding(
@@ -178,18 +155,18 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           subtitle: Text(
+                            storeList[index].description,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            storeList[index].description,
                           ),
                         ),
                       ),
                     );
                   },
-                ),
-              );
-            },
-          )
+                );
+              },
+            ),
+          ),
         ],
       ),
     );

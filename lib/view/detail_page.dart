@@ -23,17 +23,23 @@ class _DetailPageState extends State<DetailPage> {
       Uri.parse("https://fakestoreapi.com/products/" + widget.id.toString()),
     );
 
-    log(widget.id.toString());
+    // log(widget.id.toString());
 
     var data = jsonDecode(response.body.toString());
-    log(data.toString());
+    // log(data.toString());
 
     detailList = [];
     // log(data.toString());
-    log(response.statusCode.toString());
+    // log(response.statusCode.toString());
 
-    if (response.statusCode == 200) {
-      detailList.add(DetailModel.fromJson(data));
+    try {
+      if (response.statusCode == 200) {
+        detailList.add(DetailModel.fromJson(data));
+      } else {
+        return detailList;
+      }
+    } catch (e) {
+      log(e.toString());
     }
 
     return detailList;
@@ -65,7 +71,8 @@ class _DetailPageState extends State<DetailPage> {
           return ListView.builder(
             itemCount: detailList.length,
             itemBuilder: (context, index) {
-              return Expanded(
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -138,14 +145,3 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 }
-    // try {
-    //   if (response.statusCode == 200) {
-    //     detailList.add(DetailModel.fromJson(data));
-    //   } else {
-    //     return detailList;
-    //   }
-    // } catch (e) {
-    //   log(
-    //     e.toString(),
-    //   );
-    // }

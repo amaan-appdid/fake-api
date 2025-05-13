@@ -1,14 +1,24 @@
 import 'package:fake_api/models/store_model.dart';
+import 'package:fake_api/view/detail_page.dart';
 import 'package:flutter/material.dart';
 
-class SearchScreen extends StatelessWidget {
+class SearchScreen extends StatefulWidget {
   SearchScreen({super.key, required this.storelist});
 
-  TextEditingController searchController = TextEditingController();
   final List<StoreModel> storelist;
 
   @override
+  State<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen> {
+  TextEditingController searchController = TextEditingController();
+
+  @override
   Widget build(BuildContext context) {
+    final searchList = widget.storelist.where((element) {
+      return element.title.toLowerCase().contains(searchController.text.toLowerCase());
+    }).toList();
     return Scaffold(
       appBar: AppBar(
         title: Text("Search Screen"),
@@ -19,10 +29,15 @@ class SearchScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: TextFormField(
               controller: searchController,
-              onChanged: (value) {},
+              onChanged: (value) {
+                setState(() {});
+              },
               decoration: InputDecoration(
                 suffixIcon: GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    searchController.clear();
+                    setState(() {});
+                  },
                   child: Icon(Icons.clear),
                 ),
                 hintText: "Search",
@@ -38,16 +53,25 @@ class SearchScreen extends StatelessWidget {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: storelist.length,
+              itemCount: searchList.length,
               itemBuilder: (context, index) {
                 return Card(
                   child: ListTile(
-                    title: Text(storelist[index].title.toString()),
-                    subtitle: Text(storelist[index].description.toString()),
+                    title: Text(searchList[index].title.toString()),
+                    subtitle: Text(searchList[index].description.toString()),
                     leading: CircleAvatar(
-                      backgroundImage: NetworkImage(storelist[index].image.toString()),
+                      backgroundImage: NetworkImage(searchList[index].image.toString()),
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailPage(
+                            id: searchList[index].id,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 );
               },
